@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinTech Pro - Интернет-банк</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Экран авторизации -->
+        <div id="auth-screen" class="screen active">
+            <div class="auth-container">
+                <div class="logo-section">
+                    <div class="logo-icon">◆</div>
+                    <h1>FinTech Pro</h1>
+                    <p class="subtitle">Цифровой банк нового поколения</p>
+                </div>
+                
+                <div class="auth-card">
+                    <div class="auth-tabs">
+                        <button class="auth-tab active" data-tab="login">Вход</button>
+                        <button class="auth-tab" data-tab="register">Открыть счёт</button>
+                    </div>
+                    
+                    <form id="login-form" class="auth-form active">
+                        <div class="input-wrapper">
+                            <span class="input-icon">👤</span>
+                            <input type="text" id="login-username" placeholder="Логин или номер счёта" required>
+                        </div>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🔒</span>
+                            <input type="password" id="login-password" placeholder="Пароль" required>
+                        </div>
+                        <div class="remember-me">
+                            <label><input type="checkbox" id="remember"> Запомнить меня</label>
+                        </div>
+                        <p id="login-error" class="error-message"></p>
+                        <button type="submit" class="btn-primary btn-full">Войти в систему</button>
+                    </form>
+                    
+                    <form id="register-form" class="auth-form">
+                        <div class="input-wrapper">
+                            <span class="input-icon">📝</span>
+                            <input type="text" id="reg-fullname" placeholder="ФИО полностью" required>
+                        </div>
+                        <div class="input-row">
+                            <div class="input-wrapper">
+                                <span class="input-icon">📅</span>
+                                <input type="date" id="reg-birthdate" required>
+                            </div>
+                            <div class="input-wrapper">
+                                <span class="input-icon">📞</span>
+                                <input type="tel" id="reg-phone" placeholder="Телефон" required>
+                            </div>
+                        </div>
+                        <div class="input-wrapper">
+                            <span class="input-icon">📧</span>
+                            <input type="email" id="reg-email" placeholder="Email" required>
+                        </div>
+                        <div class="input-wrapper">
+                            <span class="input-icon">👤</span>
+                            <input type="text" id="reg-username" placeholder="Придумайте логин" required>
+                        </div>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🔒</span>
+                            <input type="password" id="reg-password" placeholder="Пароль (мин. 8 символов)" minlength="8" required>
+                        </div>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🔢</span>
+                            <input type="password" id="reg-pin" placeholder="PIN-код (4 цифры)" maxlength="4" pattern="\d{4}" required>
+                        </div>
+                        <div class="currency-select">
+                            <label>Основная валюта счёта:</label>
+                            <select id="reg-currency">
+                                <option value="RUB">₽ Российский рубль</option>
+                                <option value="USD">$ Доллар США</option>
+                                <option value="EUR">€ Евро</option>
+                            </select>
+                        </div>
+                        <p id="reg-error" class="error-message"></p>
+                        <button type="submit" class="btn-primary btn-full">Создать счёт</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Основной экран банка -->
+        <div id="bank-screen" class="screen">
+            <!-- Боковое меню -->
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <div class="logo-small">◆</div>
+                    <span>FinTech Pro</span>
+                </div>
+                <nav class="sidebar-nav">
+                    <button class="nav-btn active" data-page="dashboard">
+                        <span>📊</span> Главная
+                    </button>
+                    <button class="nav-btn" data-page="accounts">
+                        <span>💳</span> Счета и карты
+                    </button>
+                    <button class="nav-btn" data-page="transfer">
+                        <span>📤</span> Переводы
+                    </button>
+                    <button class="nav-btn" data-page="history">
+                        <span>📋</span> История
+                    </button>
+                    <button class="nav-btn" data-page="savings">
+                        <span>🐷</span> Накопления
+                    </button>
+                    <button class="nav-btn" data-page="settings">
+                        <span>⚙️</span> Настройки
+                    </button>
+                </nav>
+                <div class="sidebar-footer">
+                    <div class="user-mini">
+                        <div class="user-avatar">👤</div>
+                        <div class="user-info-mini">
+                            <span id="sidebar-username"></span>
+                            <span class="user-status">Онлайн</span>
+                        </div>
+                    </div>
+                    <button id="logout-btn" class="btn-icon" title="Выйти">🚪</button>
+                </div>
+            </aside>
+
+            <!-- Основной контент -->
+            <main class="main-content">
+                <!-- Дашборд -->
+                <div id="page-dashboard" class="page active">
+                    <div class="page-header">
+                        <h2>Обзор</h2>
+                        <span id="current-datetime" class="datetime"></span>
+                    </div>
+                    
+                    <!-- Баланс -->
+                    <div class="balance-hero">
+                        <div class="balance-main">
+                            <p class="balance-label">Общий баланс</p>
+                            <p class="balance-amount" id="total-balance">0 ₽</p>
+                            <p class="balance-equivalent" id="balance-equivalent"></p>
+                        </div>
+                        <div class="quick-actions">
+                            <button class="quick-btn" data-action="deposit">
+                                <span>📥</span> Пополнить
+                            </button>
+                            <button class="quick-btn" data-action="transfer">
+                                <span>📤</span> Перевести
+                            </button>
+                            <button class="quick-btn" data-action="savings">
+                                <span>🐷</span> Копить
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Счета -->
+                    <div class="section">
+                        <h3>Ваши счета</h3>
+                        <div id="accounts-mini" class="accounts-grid"></div>
+                    </div>
+
+                    <!-- Последние операции -->
+                    <div class="section">
+                        <h3>Последние операции</h3>
+                        <div id="recent-transactions" class="transactions-list"></div>
+                    </div>
+
+                    <!-- Статистика -->
+                    <div class="section">
+                        <h3>Расходы за месяц</h3>
+                        <div class="stats-bar" id="stats-bar"></div>
+                    </div>
+                </div>
+
+                <!-- Счета и карты -->
+                <div id="page-accounts" class="page">
+                    <div class="page-header">
+                        <h2>Счета и карты</h2>
+                        <button class="btn-primary" id="add-account-btn">+ Новый счёт</button>
+                    </div>
+                    <div id="accounts-detailed" class="accounts-detailed"></div>
+                </div>
+
+                <!-- Переводы -->
+                <div id="page-transfer" class="page">
+                    <div class="page-header"><h2>Переводы</h2></div>
+                    <div class="transfer-container">
+                        <div class="transfer-type-tabs">
+                            <button class="transfer-tab active" data-type="internal">Внутри банка</button>
+                            <button class="transfer-tab" data-type="external">Внешний перевод</button>
+                            <button class="transfer-tab" data-type="between">Между счетами</button>
+                        </div>
+                        
+                        <!-- Внутренний перевод -->
+                        <div class="transfer-form active" id="transfer-internal">
+                            <div class="form-section">
+                                <label>Счёт списания</label>
+                                <select id="tf-from-account"></select>
+                            </div>
+                            <div class="form-section">
+                                <label>Получатель (логин или номер счёта)</label>
+                                <input type="text" id="tf-to-user" placeholder="Введите логин или счёт">
+                                <div id="tf-recipient-preview" class="recipient-preview"></div>
+                            </div>
+                            <div class="form-section">
+                                <label>Сумма</label>
+                                <div class="amount-input-wrapper">
+                                    <input type="number" id="tf-amount" placeholder="0" min="1">
+                                    <span id="tf-currency">₽</span>
+                                </div>
+                                <p id="tf-amount-words" class="amount-words"></p>
+                            </div>
+                            <div class="form-section">
+                                <label>Комментарий</label>
+                                <input type="text" id="tf-comment" placeholder="Необязательно">
+                            </div>
+                            <div class="form-section">
+                                <label>PIN-код подтверждения</label>
+                                <input type="password" id="tf-pin" maxlength="4" placeholder="••••">
+                            </div>
+                            <p id="tf-error" class="error-message"></p>
+                            <button class="btn-primary btn-full" id="transfer-submit-btn">Отправить перевод</button>
+                        </div>
+
+                        <!-- Внешний перевод -->
+                        <div class="transfer-form" id="transfer-external">
+                            <div class="form-section">
+                                <label>Счёт списания</label>
+                                <select id="ext-from-account"></select>
+                            </div>
+                            <div class="form-section">
+                                <label>БИК банка получателя</label>
+                                <input type="text" id="ext-bik" placeholder="9 цифр" maxlength="9">
+                            </div>
+                            <div class="form-section">
+                                <label>Номер счёта получателя</label>
+                                <input type="text" id="ext-account" placeholder="20 цифр" maxlength="20">
+                            </div>
+                            <div class="form-section">
+                                <label>ФИО получателя</label>
+                                <input type="text" id="ext-name" placeholder="Иванов Иван Иванович">
+                            </div>
+                            <div class="form-section">
+                                <label>Сумма</label>
+                                <input type="number" id="ext-amount" placeholder="0" min="1">
+                            </div>
+                            <div class="form-section">
+                                <label>PIN-код</label>
+                                <input type="password" id="ext-pin" maxlength="4" placeholder="••••">
+                            </div>
+                            <p id="ext-error" class="error-message"></p>
+                            <button class="btn-primary btn-full" id="ext-submit-btn">Отправить</button>
+                        </div>
+
+                        <!-- Между счетами -->
+                        <div class="transfer-form" id="transfer-between">
+                            <div class="form-section">
+                                <label>Со счёта</label>
+                                <select id="btw-from-account"></select>
+                            </div>
+                            <div class="form-section">
+                                <label>На счёт</label>
+                                <select id="btw-to-account"></select>
+                            </div>
+                            <div class="form-section">
+                                <label>Сумма</label>
+                                <input type="number" id="btw-amount" placeholder="0" min="1">
+                            </div>
+                            <div class="form-section">
+                                <label>PIN-код</label>
+                                <input type="password" id="btw-pin" maxlength="4" placeholder="••••">
+                            </div>
+                            <p id="btw-error" class="error-message"></p>
+                            <button class="btn-primary btn-full" id="btw-submit-btn">Перевести</button>
+                        </div>
+                        
+                        <!-- Шаблоны -->
+                        <div class="templates-section">
+                            <h4>📌 Сохранённые шаблоны</h4>
+                            <div id="templates-list" class="templates-list"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- История -->
+                <div id="page-history" class="page">
+                    <div class="page-header"><h2>История операций</h2></div>
+                    <div class="filters">
+                        <select id="filter-account">
+                            <option value="all">Все счета</option>
+                        </select>
+                        <select id="filter-type">
+                            <option value="all">Все типы</option>
+                            <option value="income">Поступления</option>
+                            <option value="expense">Списания</option>
+                        </select>
+                        <input type="date" id="filter-date-from" placeholder="С даты">
+                        <input type="date" id="filter-date-to" placeholder="По дату">
+                        <input type="text" id="filter-search" placeholder="Поиск...">
+                        <button id="export-btn" class="btn-outline">📄 Выписка</button>
+                    </div>
+                    <div id="full-history" class="full-history"></div>
+                </div>
+
+                <!-- Накопления -->
+                <div id="page-savings" class="page">
+                    <div class="page-header"><h2>Накопительные счета</h2></div>
+                    <div id="savings-accounts" class="savings-list"></div>
+                    <button class="btn-primary" id="create-saving-btn">+ Создать цель</button>
+                    
+                    <!-- Модальное окно создания цели -->
+                    <div id="saving-modal" class="modal">
+                        <div class="modal-content">
+                            <h3>Новая цель накопления</h3>
+                            <div class="form-section">
+                                <label>Название цели</label>
+                                <input type="text" id="saving-name" placeholder="Например: На отпуск">
+                            </div>
+                            <div class="form-section">
+                                <label>Целевая сумма</label>
+                                <input type="number" id="saving-target" min="1" placeholder="100000">
+                            </div>
+                            <div class="form-section">
+                                <label>Валюта</label>
+                                <select id="saving-currency">
+                                    <option value="RUB">₽ RUB</option>
+                                    <option value="USD">$ USD</option>
+                                    <option value="EUR">€ EUR</option>
+                                </select>
+                            </div>
+                            <div class="modal-actions">
+                                <button class="btn-outline" id="saving-cancel">Отмена</button>
+                                <button class="btn-primary" id="saving-create">Создать</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Настройки -->
+                <div id="page-settings" class="page">
+                    <div class="page-header"><h2>Настройки</h2></div>
+                    <div class="settings-section">
+                        <h3>Профиль</h3>
+                        <div class="setting-row">
+                            <span>ФИО:</span>
+                            <span id="set-fullname"></span>
+                        </div>
+                        <div class="setting-row">
+                            <span>Логин:</span>
+                            <span id="set-username"></span>
+                        </div>
+                        <div class="setting-row">
+                            <span>Email:</span>
+                            <span id="set-email"></span>
+                        </div>
+                        <div class="setting-row">
+                            <span>Телефон:</span>
+                            <span id="set-phone"></span>
+                        </div>
+                    </div>
+                    <div class="settings-section">
+                        <h3>Безопасность</h3>
+                        <button class="btn-outline" id="change-pin-btn">Сменить PIN-код</button>
+                        <button class="btn-outline" id="change-password-btn">Сменить пароль</button>
+                    </div>
+                    <div class="settings-section">
+                        <h3>Уведомления</h3>
+                        <label class="switch">
+                            <input type="checkbox" id="notify-login" checked>
+                            <span>Уведомления о входе</span>
+                        </label>
+                        <label class="switch">
+                            <input type="checkbox" id="notify-transfer" checked>
+                            <span>Уведомления о переводах</span>
+                        </label>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Тост-уведомления -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
